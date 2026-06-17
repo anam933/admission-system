@@ -54,11 +54,20 @@
     </td>
     <td>
         <a href="{{ route('admissions.edit', $admission->id) }}" class="btn btn-info btn-sm">Edit</a>
-        <form action="{{ route('admissions.destroy', $admission->id) }}" method="POST" style="display:inline-block;">
-            @csrf
-            @method('DELETE')
-            <button class="btn btn-danger btn-sm">Delete</button>
-        </form>
+        <form action="{{ route('admissions.destroy', $admission->id) }}"
+      method="POST"
+      style="display:inline-block;">
+
+    @csrf
+    @method('DELETE')
+
+    <button type="submit"
+            class="btn btn-danger btn-sm"
+            onclick="return confirm('Are you sure you want to delete this admission?')">
+        Delete
+    </button>
+
+</form>
     </td>
 </tr>
 @empty

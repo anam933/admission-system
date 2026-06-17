@@ -126,21 +126,30 @@ class AdmissionController extends Controller
      * UPDATE
      */
     public function update(Request $request, $id)
-    {
-        $instituteId = $this->getActiveInstituteId();
+{
+    $instituteId = $this->getActiveInstituteId();
 
-        $admission = Admission::where('institute_id', $instituteId)
-            ->findOrFail($id);
+    $admission = Admission::where('institute_id', $instituteId)
+        ->findOrFail($id);
 
-        $admission->update($request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required',
-        ]));
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'phone' => 'required',
+        'total_fees' => 'required|numeric',
+        'paid_amount' => 'required|numeric',
+        'status' => 'required'
+    ]);
 
-        return redirect()->route('admissions.index')
-            ->with('success', 'Admission updated successfully.');
-    }
+    $validated['remaining_amount'] =
+        $validated['total_fees'] - $validated['paid_amount'];
+
+    $admission->update($validated);
+
+    return redirect()
+        ->route('admissions.index')
+        ->with('success', 'Admission updated successfully.');
+}
 
     /**
      * DELETE
