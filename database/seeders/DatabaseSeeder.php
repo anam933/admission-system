@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Course;
+use App\Models\Institute;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,28 +17,54 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Admin User
-        User::factory()->create([
+        $institute1 = Institute::create(['name' => 'Institute 1']);
+        $institute2 = Institute::create(['name' => 'Institute 2']);
+        $institute3 = Institute::create(['name' => 'Institute 3']);
+
+        $admin = User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@test.com',
-            'password' => bcrypt('password123'),
+            'password' => bcrypt('12345678'),
             'role' => 'admin',
+            'institute_id' => null,
         ]);
 
-        // Create Manager User
-        User::factory()->create([
+        $manager = User::factory()->create([
             'name' => 'Manager User',
             'email' => 'manager@test.com',
-            'password' => bcrypt('password123'),
+            'password' => bcrypt('12345678'),
             'role' => 'manager',
+            'institute_id' => $institute1->id,
+            'created_by' => $admin->id,
         ]);
 
-        // Create Employee User
         User::factory()->create([
             'name' => 'Employee User',
             'email' => 'employee@test.com',
-            'password' => bcrypt('password123'),
+            'password' => bcrypt('12345678'),
             'role' => 'employee',
+            'institute_id' => $institute1->id,
+            'created_by' => $manager->id,
+        ]);
+
+        foreach (['Laravel', 'PHP', 'JavaScript'] as $courseName) {
+            Course::create([
+                'institute_id' => $institute1->id,
+                'course_name' => $courseName,
+                'description' => null,
+            ]);
+        }
+
+        Course::create([
+            'institute_id' => $institute2->id,
+            'course_name' => 'Web Design',
+            'description' => null,
+        ]);
+
+        Course::create([
+            'institute_id' => $institute3->id,
+            'course_name' => 'Database Basics',
+            'description' => null,
         ]);
     }
 }

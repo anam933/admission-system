@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function ($middleware) {
     $middleware->alias([
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'tenant' => \App\Http\Middleware\TenantMiddleware::class,
     ]);
 })
 

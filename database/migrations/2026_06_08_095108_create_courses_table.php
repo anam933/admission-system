@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'manager', 'employee'])
-                  ->default('employee');
+        Schema::create('courses', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('institute_id')->constrained()->cascadeOnDelete();
+            $table->string('course_name');
+            $table->text('description')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -22,6 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // empty rakho
+        Schema::dropIfExists('courses');
     }
 };
+    

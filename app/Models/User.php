@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Institute;
+use App\Models\Candidate;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,6 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'institute_id',
         'created_by',
     ];
 
@@ -47,5 +50,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function institute()
+    {
+        return $this->belongsTo(Institute::class);
+    }
+
+    public function createdCandidates()
+    {
+        return $this->hasMany(Candidate::class, 'created_by');
     }
 }

@@ -1,51 +1,66 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit User</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+@extends('layouts.app')
 
-<body class="bg-gray-100">
+@section('content')
 
-<div class="flex justify-center items-center min-h-screen">
-
-    <div class="bg-white p-8 rounded-lg shadow w-96">
-
-        <h2 class="text-2xl font-bold mb-4">Edit User</h2>
-
-        <form method="POST" action="/admin/update/{{ $user->id }}">
-            @csrf
-
-            <input type="text" name="name"
-                value="{{ $user->name }}"
-                class="w-full p-2 border mb-3 rounded"
-                placeholder="Name">
-
-            <input type="email" name="email"
-                value="{{ $user->email }}"
-                class="w-full p-2 border mb-3 rounded"
-                placeholder="Email">
-
-            @if(auth()->id() == $user->id)
-                <input type="hidden" name="role" value="{{ $user->role }}">
-            @else
-            
-                <select name="role">
-                    <option value="admin">Admin</option>
-                    <option value="manager">Manager</option>
-                    <option value="employee">Employee</option>
-                </select>
-            @endif
-
-            <button class="w-full bg-blue-600 text-white p-2 rounded">
-                Update
-            </button>
-
-        </form>
-
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Edit User</h1>
+            </div>
+        </div>
     </div>
+</section>
 
-</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ route('admin.update', $user->id) }}">
+                    @csrf
 
-</body>
-</html>
+                    <div class="form-group mb-3">
+                        <label>Name</label>
+                        <input type="text" name="name" value="{{ $user->name }}" class="form-control">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Email</label>
+                        <input type="email" name="email" value="{{ $user->email }}" class="form-control">
+                    </div>
+
+                    @if(auth()->id() == $user->id)
+                        <input type="hidden" name="role" value="{{ $user->role }}">
+                    @elseif(auth()->user()->role === 'admin')
+                        <div class="form-group mb-3">
+                            <label>Role</label>
+                            <select name="role" class="form-control">
+                                <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="manager" {{ $user->role == 'manager' ? 'selected' : '' }}>Manager</option>
+                                <option value="employee" {{ $user->role == 'employee' ? 'selected' : '' }}>Employee</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Institute</label>
+                            <select name="institute_id" class="form-control">
+                                <option value="">Select institute</option>
+                                @foreach($institutes as $institute)
+                                    <option value="{{ $institute->id }}" {{ $user->institute_id == $institute->id ? 'selected' : '' }}>{{ $institute->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @elseif(auth()->user()->role === 'manager')
+                        <input type="hidden" name="role" value="{{ $user->role }}">
+                    @else
+                        <input type="hidden" name="role" value="{{ $user->role }}">
+                    @endif
+
+                    <button class="btn btn-primary">Update</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@endsection

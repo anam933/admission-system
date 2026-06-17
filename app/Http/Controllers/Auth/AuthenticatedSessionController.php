@@ -30,21 +30,15 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        // safety check (important)
-        if (!$user || !$user->role) {
+        if (! $user || ! $user->role) {
             Auth::logout();
+
             return redirect('/login')->withErrors([
                 'email' => 'User role not defined.',
             ]);
         }
 
-        // role-based redirect
-        return match ($user->role) {
-    'admin' => redirect('/admin/dashboard'),
-    'manager' => redirect('/manager/dashboard'),
-    'employee' => redirect('/employee/dashboard'),
-    default => redirect('/dashboard'),
-};
+        return redirect()->route('dashboard');
     }
 
     /**
